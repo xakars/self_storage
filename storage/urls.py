@@ -9,6 +9,10 @@ app_name = "storage"
 urlpatterns = [
     path('', lambda request: redirect('storage:start_page')),
     path('index/', views.view_index, name='start_page'),
+    path('login/', views.login_view, name='login'),
+    path('signup/', views.signup_view, name='signup'),
+    path('logout/', views.logout, name="logout"),
+    path('forgot/', views.forgot_view, name="forgot"),
     path('boxes/', views.view_boxes, name='view_boxes'),
     path('faq/', views.view_faq, name='view_faq'),
     path('my_rent/', views.view_my_rent, name='view_my_rent'),
