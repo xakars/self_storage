@@ -5,7 +5,7 @@ from .models import Box, Storage, Order
 
 @admin.register(Box)
 class BoxAdmin(admin.ModelAdmin):
-    readonly_fields = ('box_area',)
+    pass
 
 
 @admin.register(Storage)
@@ -15,4 +15,4 @@ class StorageAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = ('rental_period_price',)
