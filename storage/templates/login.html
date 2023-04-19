@@ -12,7 +12,7 @@
 	<div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
 		<div class="modal-content">
 			<div class="modal-header border-0">
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				<a href="{% url 'storage:start_page' %}" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
 			</div>
 			<div class="modal-body d-flex justify-content-center align-items-center">
 				<form action="{% url 'storage:login' %}" method="post" class="d-flex flex-column align-items-center" style="max-width: 420px">
