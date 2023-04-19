@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
 
 def view_index(request):
@@ -56,8 +57,10 @@ def view_faq(request):
     return render(request, template_name="faq.html", context={})
 
 
+@login_required
 def view_my_rent(request):
-    return render(request, template_name="my-rent.html", context={})
+    user = request.user
+    return render(request, template_name="my-rent.html", context={'user': user})
 
 
 def view_my_rent_empty(request):
