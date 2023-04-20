@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
-from .models import CustomUser
+from .models import CustomUser, Storage
 
 
 def view_index(request):

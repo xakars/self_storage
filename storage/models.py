@@ -17,7 +17,8 @@ class CustomUser(AbstractUser):
 class Storage(models.Model):
     name = models.CharField('Название', max_length=20)
     address = models.CharField('Адрес', max_length=100, unique=True)
-    picture = models.ImageField('Фото склада')
+    picture = models.ImageField('Фото склада', upload_to='storage')
+    big_picture = models.ImageField('Фото склада большое', upload_to='storage', blank=True)
 
     class Meta:
         verbose_name = 'Склад'
