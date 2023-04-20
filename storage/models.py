@@ -4,8 +4,13 @@ from django.utils import timezone
 
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
 from django.db.models import F
+from django.contrib.auth.models import AbstractUser
+from phonenumber_field.modelfields import PhoneNumberField
+
+
+class CustomUser(AbstractUser):
+    phone_number = PhoneNumberField('Номер телефона', region="RU", blank=True)
 
 
 class Storage(models.Model):
@@ -93,9 +98,8 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
-    # не получится использовать модель User, нужен номер телефона
     client = models.ForeignKey(
-        User,
+        CustomUser,
         related_name='orders',
         verbose_name='Клиент',
         on_delete=models.SET_NULL,

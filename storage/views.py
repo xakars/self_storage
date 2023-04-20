@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from storage.models import CustomUser
 
 
 def view_index(request):
@@ -40,7 +41,7 @@ def signup_view(request):
         if password != password1:
             error_msg = "Пароли не совпадают"
             return render(request, 'signup.html', {'error_msg': error_msg})
-        user = User.objects.create_user(username=username, email=username, password=password)
+        user = CustomUser.objects.create_user(username=username, email=username, password=password)
         user.save()
         return redirect('storage:login')
     else:
