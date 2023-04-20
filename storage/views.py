@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from storage.models import CustomUser
@@ -31,7 +31,8 @@ def forgot_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect(reverse_lazy('storage:start_page'))
+
 
 def signup_view(request):
     if request.method == 'POST':

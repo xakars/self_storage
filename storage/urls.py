@@ -1,5 +1,5 @@
 from django.urls import path
-from django.shortcuts import redirect
+from django.contrib.auth import views as auth_views
 from . import views
 
 
@@ -11,7 +11,7 @@ urlpatterns = [
     path('', views.view_index, name='start_page'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
-    path('logout/', views.logout, name="logout"),
+    path('logout/', auth_views.LogoutView.as_view(next_page='storage:start_page'), name="logout"),
     path('forgot/', views.forgot_view, name="forgot"),
     path('boxes/', views.view_boxes, name='view_boxes'),
     path('faq/', views.view_faq, name='view_faq'),
