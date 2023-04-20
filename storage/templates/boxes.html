@@ -112,7 +112,7 @@
 			<div class="tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-home-tab">
 
 				{% for box in boxes %}
-				<div class="tab-pane box-item" role="tabpanel" aria-labelledby="pills-profile-tab" data-area="{{ box.get_box_size }}">
+				<div class="tab-pane box-item" role="tabpanel" aria-labelledby="pills-profile-tab" data-area="{{ box.get_box_size }}" data-storage="#pills-{{ box.storage.id}}">
 				<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
 					<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
 						<span class="SelfStorage_green fs_24 me-2">{{ box.floor }} эт.</span><span class="fs_24">№{{ box.number }}</span>
@@ -142,6 +142,19 @@ $(document).ready(function(){
 	    const cardArea = card.getAttribute('data-area');
 	    const filterArea = this.getAttribute('data-area');
 	    if(cardArea ===  filterArea || filterArea === 'all'){
+				card.style.display = 'block';
+	    } else{
+	      card.style.display = 'none';
+	    }
+	  }
+	});
+	$('#boxes-links .SelfStorage__boxlink').on('click', function(){
+	  const cards = document.querySelectorAll('.box-item');
+	  for(card of cards){
+
+	    const cardArea = card.getAttribute('data-storage');
+	    const filterArea = this.getAttribute('data-bs-target');
+	    if(cardArea ===  filterArea){
 				card.style.display = 'block';
 	    } else{
 	      card.style.display = 'none';
