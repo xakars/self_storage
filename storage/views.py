@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+
 from storage.models import CustomUser
 
 
@@ -62,6 +64,21 @@ def view_faq(request):
 @login_required
 def view_my_rent(request):
     user = request.user
+    if request.method == 'POST':
+        if request.POST['NAME_EDIT']:
+            user.first_name = request.POST['NAME_EDIT']
+        if request.POST['PHONE_EDIT']:
+            user.phone_number = request.POST['PHONE_EDIT']
+        if request.POST['EMAIL_EDIT']:
+            user.email = request.POST['EMAIL_EDIT']
+        if request.POST['PASSWORD_EDIT'] != "********":
+            user.set_password(request.POST['PASSWORD_EDIT'])
+        if request.FILES['AVATAR_EDIT']:
+            avatar = request.FILES['AVATAR_EDIT']
+            fss = FileSystemStorage()
+            file = fss.save(avatar.name, avatar)
+            user.avatar = fss.url(file)
+        user.save()
     return render(request, template_name="my-rent.html", context={'user': user})
 
 

@@ -1,6 +1,8 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 app_name = "storage"
@@ -17,4 +19,4 @@ urlpatterns = [
     path('faq/', views.view_faq, name='view_faq'),
     path('my_rent/', views.view_my_rent, name='view_my_rent'),
     path('my_rent_empty/', views.view_my_rent_empty, name='view_my_rent_empty'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

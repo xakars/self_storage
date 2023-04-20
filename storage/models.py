@@ -11,6 +11,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class CustomUser(AbstractUser):
     phone_number = PhoneNumberField('Номер телефона', region="RU", blank=True)
+    avatar = models.ImageField(upload_to='avatar', blank=True)
 
 
 class Storage(models.Model):

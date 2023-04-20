@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block body_block %}
 <main class="container mt-header">
 	<div class="row" role="tablist">
@@ -12,24 +12,33 @@
 		<div class="col-lg-9">
 			<div class="card tab-content p-5">
 				<div class="tab-pane fade show active" id="LK" role="tabpanel" aria-labelledby="LK-tab">
-					<div class="row">
-						<div class="col-12 col-sm-5 d-flex flex-column align-items-center">
-							<img src="../static/img/image10.png" class="rounded-pill mb-3" alt="">
-							<h4>Имя</h4>
-						</div>
-						<div class="col-12 col-sm-7 d-flex flex-column">
-							<form>
+					<form action="{% url 'storage:view_my_rent' %}" method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="row">
+							<div class="col-12 col-sm-5 d-flex flex-column">
+								{% if user.avatar %}
+								<img src="{{ user.avatar }}" class="rounded-pill mb-3" alt="">
+								{% else %}
+								<img src="{% static 'img/user.png'%}" class="rounded-pill mb-3" alt="">
+								{% endif %}
+								<input type="file" name="AVATAR_EDIT" id="AVATAR" class="form-control fs_24 ps-2 SelfStorage__input" value="" hidden>
+							</div>
+							<div class="col-12 col-sm-7 d-flex flex-column">
+								<label class="fs_24 SelfStorage_green ms-2" for="NAME">Ваше имя</label>
+								<input type="name" name="NAME_EDIT" id="NAME" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ user.first_name }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="EMAIL">E-mail</label>
 								<input type="email" name="EMAIL_EDIT" id="EMAIL" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ user.email }}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="PHONE">Телефон</label>
 								<input type="tel" name="PHONE_EDIT" id="PHONE" class="form-control fs_24 ps-2 SelfStorage__input" value="{{user.phone_number}}" disabled>
 								<label class="fs_24 SelfStorage_green ms-2" for="PASSWORD">Пароль</label>
-								<input type="password" name="PASSWORD_EDIT" id="PASSWORD" class="form-control fs_24 ps-2 SelfStorage__input" value="{{ user.password }}" disabled>
+								<input type="password" name="PASSWORD_EDIT" id="PASSWORD" class="form-control fs_24 ps-2 SelfStorage__input" value="********" disabled>
 								<button type="submit" class="btn SelfStorage_green ps-1" id="save" style="display: none">Сохранить</button>
 								<a class="btn SelfStorage_orange ps-1" id="edit">Редактировать</a>
 								<script>
 									document.getElementById('edit').addEventListener('click', e => {
 										e.preventDefault()
+										document.getElementById('AVATAR').hidden = false
+										document.getElementById('NAME').disabled = false
 										document.getElementById('EMAIL').disabled = false
 										document.getElementById('PHONE').disabled = false
 										document.getElementById('PASSWORD').disabled = false
@@ -39,6 +48,8 @@
 									})
 									document.getElementById('save').addEventListener('click', () => {
 										setTimeout(() => {
+											document.getElementById('AVATAR').disabled = true
+											document.getElementById('NAME').disabled = true
 											document.getElementById('EMAIL').disabled = true
 											document.getElementById('PHONE').disabled = true
 											document.getElementById('PASSWORD').disabled = true
@@ -48,9 +59,9 @@
 										}, 0)
 									})
 								</script>
-							</form>
+							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 				<div class="tab-pane fade" id="Rent" role="tabpanel" aria-labelledby="Rent-tab">
 					<h1 class="fw-bold SelfStorage_green mb-5">Добрый день, Екатерина!</h1>
