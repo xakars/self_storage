@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
-from storage.models import CustomUser
+from .models import CustomUser
 
 
 def view_index(request):
@@ -54,7 +54,9 @@ def signup_view(request):
 
 
 def view_boxes(request):
-    return render(request, template_name="boxes.html", context={})
+    storages = Storage.objects.all()
+    return render(request, template_name="boxes.html",
+        context={'storages': storages})
 
 
 def view_faq(request):
@@ -76,7 +78,7 @@ def view_my_rent(request):
         if request.FILES['AVATAR_EDIT']:
             avatar = request.FILES['AVATAR_EDIT']
             fss = FileSystemStorage()
-            file = fss.save(avatar.name, avatar)
+            file = fss.save(f'avatar/{avatar.name}', avatar)
             user.avatar = fss.url(file)
         user.save()
     return render(request, template_name="my-rent.html", context={'user': user})
