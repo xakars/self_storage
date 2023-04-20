@@ -1,4 +1,5 @@
 import os
+import random
 from django.conf import settings
 from django.core.files import File
 from django.core.management.base import BaseCommand, CommandError
@@ -29,3 +30,19 @@ class Command(BaseCommand):
                 djangofile = File(local_file)
                 new_storage.big_picture.save(f'storage/{storage["big_picture"]}', djangofile)
                 local_file.close()
+
+        storages = Storage.objects.all()
+
+        for storage in storages:
+            for item in range(10):
+                box = Box.objects.create(
+                    storage=storage,
+                    number=random.randint(1000,1999),
+                    floor=random.randint(1,5),
+                    width=random.randint(2,6),
+                    length=random.randint(1,10),
+                    height=random.randint(100,350)/100.00,
+                    temperature=random.randint(15,25)
+                )
+                box.monthly_price = box.get_box_area() * 539
+                box.save()

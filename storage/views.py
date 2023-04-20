@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
-from .models import CustomUser, Storage
+from .models import CustomUser, Storage, Box
 
 
 def view_index(request):
@@ -55,8 +55,9 @@ def signup_view(request):
 
 def view_boxes(request):
     storages = Storage.objects.all()
+    boxes = Box.objects.order_by('monthly_price')
     return render(request, template_name="boxes.html",
-        context={'storages': storages})
+        context={'storages': storages, 'boxes': boxes})
 
 
 def view_faq(request):

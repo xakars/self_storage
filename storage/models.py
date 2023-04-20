@@ -73,7 +73,9 @@ class Box(models.Model):
         'Цена',
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(0)]
+        validators=[MinValueValidator(0)],
+        blank=True,
+        null=True
     )
 
     class Meta:
@@ -82,6 +84,17 @@ class Box(models.Model):
         unique_together = ('storage', 'number')
 
     objects = BoxQuerySet.as_manager()
+
+    def get_box_area(self):
+        return int(self.length * self.width)
+
+    def get_box_size(self):
+        if self.length * self.width <= 5:
+            return 1
+        if self.length * self.width <= 10:
+            return 2
+        if self.length * self.width > 10:
+            return 3
 
     def __str__(self):
         return f'№{self.number} / этаж: {self.floor} / размеры: {self.length}x{self.width} / высота потолка: {self.height}'
