@@ -141,7 +141,7 @@ $(document).ready(function(){
 
 	    const cardArea = card.getAttribute('data-area');
 	    const filterArea = this.getAttribute('data-area');
-	    if(cardArea ===  filterArea || cardArea === 'all'){
+	    if(cardArea ===  filterArea || filterArea === 'all'){
 				card.style.display = 'block';
 	    } else{
 	      card.style.display = 'none';
