@@ -4,7 +4,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.db.models import F, Max, Count, Q 
+from django.db.models import F, Max, Min, Count, Q 
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.files.base import ContentFile
@@ -17,11 +17,14 @@ class CustomUser(AbstractUser):
 class StorageQuerySet(models.QuerySet):
     def get_box_count_by_storages(self):
         return self.annotate(num_boxes=Count('boxes'))
-    
+
     def get_empty_box_count_by_storages(self):
         vacant_boxes = Count('boxes', filter=Q(boxes__occupied=False))
         return self.annotate(num_vacant_boxes=vacant_boxes)
-                                      
+
+    def get_min_box_price(self):
+        return self.aggregate(Min('boxes__monthly_price'))['boxes__monthly_price__min']
+                            
 
 class Storage(models.Model):
     name = models.CharField('Название', max_length=20)
