@@ -16,6 +16,7 @@ def login_view(request):
         username = request.POST['EMAIL']
         password = request.POST['PASSWORD']
         user = authenticate(request, username=username, password=password)
+        print(username, password)
         if user:
             login(request, user)
             return redirect('storage:start_page')
@@ -38,13 +39,14 @@ def logout_view(request):
 
 def signup_view(request):
     if request.method == 'POST':
-        username = request.POST['EMAIL_CREATE']
+        first_name = request.POST['FIRST_NAME']
+        email = request.POST['EMAIL_CREATE']
         password = request.POST['PASSWORD_CREATE']
         password1 = request.POST['PASSWORD_CONFIRM']
         if password != password1:
             error_msg = "Пароли не совпадают"
             return render(request, 'signup.html', {'error_msg': error_msg})
-        user = CustomUser.objects.create_user(username=username, email=username, password=password)
+        user = CustomUser.objects.create_user(username=email, email=email, password=password, first_name=first_name)
         user.save()
         return redirect('storage:login')
     else:
