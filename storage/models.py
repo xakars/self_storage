@@ -1,18 +1,27 @@
+import qrcode
 from decimal import Decimal
 from datetime import timedelta
 from django.utils import timezone
-
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.db.models import F
+from django.db.models import F, Max, Count, Q 
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
-
+from django.core.files.base import ContentFile
 
 class CustomUser(AbstractUser):
     phone_number = PhoneNumberField('Номер телефона', region="RU", blank=True)
     avatar = models.ImageField(upload_to='avatar', blank=True)
 
+
+class StorageQuerySet(models.QuerySet):
+    def get_box_count_by_storages(self):
+        return self.annotate(num_boxes=Count('boxes'))
+    
+    def get_empty_box_count_by_storages(self):
+        vacant_boxes = Count('boxes', filter=Q(boxes__occupied=False))
+        return self.annotate(num_vacant_boxes=vacant_boxes)
+                                      
 
 class Storage(models.Model):
     name = models.CharField('Название', max_length=20)
@@ -24,6 +33,8 @@ class Storage(models.Model):
         verbose_name = 'Склад'
         verbose_name_plural = 'Склады'
 
+    objects = StorageQuerySet.as_manager()
+
     def __str__(self):
         return f'{self.name}: {self.address}'
 
@@ -31,6 +42,9 @@ class Storage(models.Model):
 class BoxQuerySet(models.QuerySet):
     def get_box_area(self):
         return self.annotate(box_size=F('length') * F('width'))
+
+    def get_max_height(self):
+        return self.aggregate(Max('height'))['height__max']
 
 
 class Box(models.Model):
@@ -140,18 +154,23 @@ class Order(models.Model):
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
-    def create_qr_code(self):
-        # TODO с помощью pip install qrcode
-        return 'I am qr_code:3'
+    def calculate_rental_period_price(self):
+        self.rental_period_price = self.box.monthly_price * self.rental_period
+        self.save()
 
+    def occupy_box(self):
+        box.occupied = True
+        box.save()
+
+    def generate_qr_code(self):
+        data = f"Box {self.box.number}, rental period {self.rental_period}"
+        img = qrcode.make(data)
+        filename = f"{self.pk}_qr_code.png"
+        qr_code_file = ContentFile(b'')
+        img.save(qr_code_file, format='PNG')
+        self.qr_code.save(filename, qr_code_file)
+    
     # TODO вычиление deadline_overdue, utilize_deadline и extra_payment
-
-    def save(self, *args, **kwargs):
-        if not self.pickup_deadline:
-            self.pickup_deadline = self.created_at + timedelta(days=self.rental_period*30)
-        if not self.rental_period_price:
-            self.rental_period_price = self.box.monthly_price * self.rental_period
-        super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.box.number} / {self.client}'
