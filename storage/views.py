@@ -16,7 +16,6 @@ def login_view(request):
         username = request.POST['EMAIL']
         password = request.POST['PASSWORD']
         user = authenticate(request, username=username, password=password)
-        print(username, password)
         if user:
             login(request, user)
             return redirect('storage:start_page')
