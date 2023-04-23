@@ -113,7 +113,10 @@
 
 				{% for box in boxes %}
 				<div class="tab-pane box-item" role="tabpanel" aria-labelledby="pills-profile-tab" data-area="{{ box.get_box_size }}" data-storage="#pills-{{ box.storage.id}}">
-				<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
+				<!--{% with box_id=box.id %}-->
+				<a href="{% url 'storage:create_order' %}?box={{ box.id }}&rental_period=3" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
+				<!--{% endwith %}-->
+					
 					<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
 						<span class="SelfStorage_green fs_24 me-2">{{ box.floor }} эт.</span><span class="fs_24">№{{ box.number }}</span>
 					</div>

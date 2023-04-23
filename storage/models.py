@@ -158,7 +158,7 @@ class Order(models.Model):
         verbose_name_plural = 'Заказы'
 
     def calculate_rental_period_price(self):
-        self.rental_period_price = self.box.monthly_price * self.rental_period
+        self.rental_period_price = int(self.box.monthly_price) * int(self.rental_period)
         self.save()
 
     def occupy_box(self):

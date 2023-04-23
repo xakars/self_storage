@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block body_block %}
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h1>{{ user }}</h1>
+<form method="POST" action="{% url 'storage:create_order' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_address">Address:</label>
+      <textarea class="form-control" name="address" id="id_address" required></textarea>
+    </div>
+    <input type="hidden" name="box" value="{{ box_id }}">
+    <input type="hidden" name="rental_period" value="{{ rental_period }}">
+    <input type="hidden" name="client" value="{{ request.user.id }}">
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
+
+
+
+
+<!--<form method="post">
+    {% csrf_token %}
+    <input type="text" name="box" placeholder="Box">
+    <input type="text" name="client" placeholder="Client">
+    <input type="text" name="address" placeholder="Address">
+    <input type="number" name="rental_period" placeholder="Rental period">
+    <input type="checkbox" name="delivery_needed"> Delivery needed<br>
+    <input type="checkbox" name="measurement_needed"> Measurement needed<br>
+    <input type="submit" value="Create order">
+</form>-->
