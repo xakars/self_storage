@@ -141,7 +141,7 @@ def checkout(request):
        name=f"{order.client.phone_number} {order.box.number}",
        description="price/month",)
     stripe_product_price = stripe.Price.create(
-       unit_amount=order.rental_period_price,
+       unit_amount=order.rental_period_price*100,
        currency="RUB",
        product=stripe_product['id'],)
     price = stripe_product_price['id']
