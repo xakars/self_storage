@@ -91,7 +91,8 @@ def view_my_rent(request):
             file = fss.save(f'avatar/{avatar.name}', avatar)
             user.avatar = fss.url(file)
         user.save()
-    return render(request, template_name="my-rent.html", context={'user': user})
+    orders = user.orders.all()
+    return render(request, template_name="my-rent.html", context={'user': user, 'orders': orders})
 
 
 def view_my_rent_empty(request):
