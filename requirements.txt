@@ -1,3 +1,4 @@
 Django~=3.2.16
 Pillow==9.5.0
 django-phonenumber-field[phonenumbers]==6.3.0
+django-environ==0.10.0

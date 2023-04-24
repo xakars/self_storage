@@ -1,10 +1,18 @@
+import stripe
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-
+from django.conf import settings
 from .models import CustomUser, Storage, Box
+from django.views.generic.base import View
+from django.utils.decorators import method_decorator
+
+
+from django.http import JsonResponse
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def view_index(request):
@@ -53,12 +61,50 @@ def signup_view(request):
     return render(request, 'signup.html', {'error_message': error_msg})
 
 
-
 def view_boxes(request):
+    user = request.user
     storages = Storage.objects.all()
     boxes = Box.objects.order_by('monthly_price')
     return render(request, template_name="boxes.html",
-        context={'storages': storages, 'boxes': boxes})
+                  context={
+                      'storages': storages,
+                      'boxes': boxes,
+                      'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY,
+                      'user': user
+                  })
+
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class CreateCheckoutSessionView(View):
+    def post(self, request, *args, **kwargs):
+        box_id = self.kwargs["pk"]
+        box = Box.objects.get(id=box_id)
+        YOUR_DOMAIN = "http://127.0.0.1:8000"
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'rub',
+                        'unit_amount': int(box.monthly_price)*100,
+                        'product_data': {
+                            'name': box.storage.name,
+                            # 'images': ['https://i.imgur.com/EHyR2nP.png'],
+                        },
+                    },
+                    'quantity': 1,
+                },
+            ],
+            metadata={
+                "product_id": box.id
+            },
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success/',
+            cancel_url=YOUR_DOMAIN + '/cancel/',
+        )
+        return JsonResponse({
+            'id': checkout_session.id
+        })
 
 
 def view_faq(request):

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block body_block %}
 <main class="container mt-header">
 	<article>
@@ -108,12 +107,12 @@
 				<button class="btn my-2 w-100 fs_24 SelfStorage__tab" id="pills-from10-tab" data-bs-toggle="pill" data-bs-target="#pills-from10" type="button" role="tab" aria-controls="pills-from10" aria-selected="false" data-area="3">От 10 м²</button>
 			</li>
 		</ul>
-		<div class="tab-content" id="pills-tabContent">
+		<div class="tab-content">
 			<div class="tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-home-tab">
 
 				{% for box in boxes %}
 				<div class="tab-pane box-item" role="tabpanel" aria-labelledby="pills-profile-tab" data-area="{{ box.get_box_size }}" data-storage="#pills-{{ box.storage.id}}">
-				<a href="#" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
+                    <a href="javascript:void(0);" class="row text-decoration-none py-3 px-4 mt-5 SelfStorage__boxlink">
 					<div class="col-12 col-md-4 col-lg-3 d-flex justify-content-center align-items-center">
 						<span class="SelfStorage_green fs_24 me-2">{{ box.floor }} эт.</span><span class="fs_24">№{{ box.number }}</span>
 					</div>
@@ -124,12 +123,13 @@
 						<span class="fs_24">{{ box.width|floatformat:"0" }} х {{ box.length|floatformat:"0" }} х {{ box.height }} м²</span>
 					</div>
 					<div class="col-12 col-lg-3">
-						<span class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8">От {{ box.monthly_price|floatformat:"0" }} ₽</span>
-					</div>
-				</a>
+                        <button id="{{ box.id }}" class="btn my-2 w-100 text-white fs_24 SelfStorage__bg_orange SelfStorage__btn2_orange border-8" type="button" onclick="redirectToPage()">От {{ box.monthly_price|floatformat:"0" }} ₽</button>
+                    </div>
+				    </a>
 				</div>
 				{% endfor %}
 			</div>
+        {% csrf_token %}
 		</div>
 	</article>
 </main>
@@ -162,5 +162,61 @@ $(document).ready(function(){
 	  }
 	});
 });
+</script>
+<script type="text/javascript">
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+  var buttons = document.querySelectorAll(".SelfStorage__btn2_orange");
+
+  buttons.forEach(function(button) {
+    button.addEventListener("click", function() {
+      var boxId = button.getAttribute("id");
+      fetch(`/create-checkout-session/${boxId}/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(session) {
+          return stripe.redirectToCheckout({sessionId: session.id});
+        })
+        .then(function(result) {
+          if (result.error) {
+            alert(result.error.message);
+          }
+        })
+        .catch(function(error) {
+          console.error("Error:", error);
+        });
+    });
+  });
+
+  var elements = stripe.elements();
+  var style = {
+    base: {
+      color: "#32325d",
+      fontFamily: 'Arial, sans-serif',
+      fontSmoothing: "antialiased",
+      fontSize: "16px",
+      "::placeholder": {
+        color: "#32325d"
+      }
+    },
+    invalid: {
+      fontFamily: 'Arial, sans-serif',
+      color: "#fa755a",
+      iconColor: "#fa755a"
+    }
+  };
+  var card = elements.create("card", { style: style });
+  card.mount("#card-element");
+  card.on("change", function (event) {
+    document.querySelector("button").disabled = event.empty;
+    document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
+  });
 </script>
 {% endblock %}
