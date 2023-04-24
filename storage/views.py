@@ -145,7 +145,7 @@ def checkout(request):
        currency="RUB",
        product=stripe_product['id'],)
     price = stripe_product_price['id']
-    
+
     checkout_session = stripe.checkout.Session.create(
         #payment_method_types=['card'],
         line_items=[{
@@ -153,7 +153,7 @@ def checkout(request):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://127.0.0.1:8000/my-rent',
+        success_url='http://self-storage.semellot.one/my-rent',
         #success_url='/my-rent/',
         cancel_url='http://localhost:8000/cancel/',
         customer_email=user.email
@@ -162,7 +162,7 @@ def checkout(request):
     #print(f'Checkout is: {checkout_session}')
 
     checkout_url = checkout_session.url
-    return redirect(checkout_url) 
+    return redirect(checkout_url)
 
 
 def success(request):
