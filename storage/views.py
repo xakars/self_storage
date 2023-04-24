@@ -73,7 +73,7 @@ def view_faq(request):
     return render(request, template_name="faq.html", context={})
 
 
-@login_required
+@login_required(login_url='/login/')
 def view_my_rent(request):
     user = request.user
     if request.method == 'POST':
@@ -98,7 +98,7 @@ def view_my_rent_empty(request):
     return render(request, template_name="my-rent-empty.html", context={})
 
 
-@login_required
+@login_required(login_url='/login/')
 def create_order(request):
     if request.method == 'POST':
         form = AddressForm(request.POST)
@@ -132,7 +132,7 @@ def create_order(request):
         print(box_id, type(box_id), rental_period, type(rental_period))
         return render(request, 'create_order.html', {'form': form, 'box_id': box_id, 'rental_period': rental_period})
 
-@login_required
+@login_required(login_url='/login/')
 def checkout(request):
     order = Order.objects.latest('id')
     stripe.api_key = 'sk_test_51MzdXXF1yAxsYBjXJ0t3xIfgAHTkAfHFstfzqpCiFvpoacqdsjGu39yVX3rJay7T8LPbjFzO83RWQrcIxsVo9aWe00nNNgkwqu'
